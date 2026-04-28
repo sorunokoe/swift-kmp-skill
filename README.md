@@ -34,14 +34,16 @@ Kotlin Multiplatform (KMP) and Swift feature modules.**
 
 ## What This Skill Covers
 
-- ✅ **Bridge architecture** — 4-layer model: Kotlin → Bridge → Swift types → Feature modules
-- ✅ **Interactor pattern** — request/response KMP calls with `@concurrent nonisolated` bridge methods
-- ✅ **Flow bridging** — `SkieSwiftFlow` direct exposure vs `AsyncStream` wrapping with leak-safe teardown
-- ✅ **Type mapping** — Kotlin sealed dispatch with `onEnum(of:)`, `KotlinThrowable` containment, collections
-- ✅ **Swift Export migration** — transition path from SKIE-era `onEnum(of:)` to native Swift enums
-- ✅ **Sendable safety** — what types must be `Sendable` at bridge boundaries and why
-- ✅ **Apple doc citations** — `AsyncStream`, `AsyncSequence` official quotes
-- 🔗 **Compose embedding** → covered by the companion [`swiftui-compose`](https://github.com/sorunokoe/swiftui-compose-skill) skill
+| | |
+|---|---|
+| **Bridge architecture** | 4-layer KMP → Bridge → Swift → Feature module model |
+| **Interactor pattern** | `@concurrent nonisolated` bridge methods, typed results |
+| **Flow bridging** | `SkieSwiftFlow` vs `AsyncStream`, leak-safe teardown |
+| **Type mapping** | Kotlin sealed, `KotlinThrowable`, collections → Swift |
+| **Swift Export** | Migration from SKIE `onEnum(of:)` to native Swift enums |
+| **Sendable safety** | What needs `@Sendable` at bridge boundaries and why |
+
+> 🔗 Embedding Compose views in SwiftUI? See the companion [**swiftui-compose**](https://github.com/sorunokoe/swiftui-compose-skill) skill.
 
 ---
 
