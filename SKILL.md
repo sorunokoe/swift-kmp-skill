@@ -1,6 +1,6 @@
 ---
 name: swift-kmp
-description: 'KMP bridge standards for iOS. USE FOR: structuring a bridge layer between Kotlin Multiplatform (KMP) and Swift; integrating KMP iOS framework APIs in a Swift app (direct integration, SwiftPM, or CocoaPods); handling SKIE flows and sealed classes; mapping Kotlin models/errors to Swift domain types; keeping KMP imports confined to the bridge layer. For Compose ↔ SwiftUI embedding, use the swiftui-compose skill.'
+description: 'KMP bridge standards for iOS. USE FOR: structuring a bridge layer between Kotlin Multiplatform (KMP) and Swift; integrating KMP iOS framework APIs in a Swift app (direct integration or SwiftPM); handling SKIE flows and sealed classes; mapping Kotlin models/errors to Swift domain types; keeping KMP imports confined to the bridge layer. For Compose ↔ SwiftUI embedding, use the swiftui-compose skill.'
 argument-hint: 'Describe the Swift-Kotlin bridge integration you need'
 applyTo: '**/*.swift'
 ---
@@ -50,7 +50,7 @@ applyTo: '**/*.swift'
 ## The Core Principle
 
 ```
-KMP iOS Framework  (direct / SwiftPM / CocoaPods — see architecture.md)
+KMP iOS Framework  (direct integration / SwiftPM — see architecture.md)
        ↓  @preconcurrency import — bridge layer only
        │  (Bridge: DI wiring, Interactors, Services, Mappers, Compose helpers)
        ↓  @Sendable closures with pure Swift types only

@@ -18,7 +18,7 @@ All notable changes to this skill are documented here.
 - `CONTRIBUTING.md` — contribution principles, PR workflow, code example guidelines
 
 **Architecture**
-- Documents all 5 official KMP iOS integration methods (direct, SwiftPM local, CocoaPods local, SwiftPM remote XCFramework, CocoaPods remote XCFramework) — bridge patterns are identical in all cases
+- Documents all 3 recommended KMP iOS integration methods (direct, SwiftPM local, SwiftPM remote XCFramework) — bridge patterns are identical in all cases
 - Clear module boundary rule: KMP imports are confined to the bridge layer regardless of integration method
 
 **Correctness (fact-checked against official documentation)**

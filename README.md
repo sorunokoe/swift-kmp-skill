@@ -50,7 +50,7 @@ Kotlin Multiplatform (KMP) and Swift feature modules.**
 > Every KMP import lives in one place — the bridge layer.
 
 ```
-KMP iOS Framework  (direct / SwiftPM / CocoaPods)
+KMP iOS Framework  (direct integration / SwiftPM)
        │  @preconcurrency import — bridge layer only
        ▼
   Bridge Layer

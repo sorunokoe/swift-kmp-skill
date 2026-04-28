@@ -15,7 +15,7 @@ Feature modules receive pure Swift types through `@Sendable` closures and never 
 │  Shared business logic, domain models        │
 │  Coroutines, Flows, suspend functions        │
 └─────────────────────┬───────────────────────┘
-                      │  iOS framework (direct / SwiftPM / CocoaPods)
+                      │  iOS framework (direct integration / SwiftPM)
                       ▼
 ┌─────────────────────────────────────────────┐
 │  Bridge Layer (main/host target)             │
@@ -74,9 +74,7 @@ integration method that fits your project structure — the bridge patterns are 
 |--------|-------------|----------|
 | **Direct integration** | Xcode run script calls `embedAndSignAppleFrameworkForXcode` Gradle task during every build | Monorepo, simultaneous iOS+KMP development; default in KMP IDE plugin |
 | **SwiftPM local package** | KMP framework declared as a local `.binaryTarget` in `Package.swift` | Monorepo with SPM-based iOS project |
-| **CocoaPods local podspec** | KMP framework connected via local `.podspec` | Projects with CocoaPods dependencies |
 | **SwiftPM remote (XCFramework)** | XCFramework published as a GitHub release; consumed as `.binaryTarget` with URL + checksum | Separated codebases; third-party SDK distribution |
-| **CocoaPods remote (XCFramework)** | XCFramework distributed through CocoaPods | Projects using CocoaPods with a separated codebase |
 
 ### Option A: Direct integration (most common for monorepos)
 
