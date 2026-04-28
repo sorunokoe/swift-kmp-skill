@@ -203,7 +203,7 @@ permissions:
   models: read
 jobs:
   health:
-    uses: sorunokoe/skills-evolution/.github/workflows/oss_skill_health.yml@latest
+    uses: sorunokoe/skills-evolution/.github/workflows/oss-skill-health.yml@latest
     with:
       enable_ai_skill_update: true
     secrets:
