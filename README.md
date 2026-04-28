@@ -1,6 +1,6 @@
 <div align="center">
 
-```
+<pre align="center">
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃                                                    ┃
 ┃   ◆  swift · kmp                  AI Coding Skill  ┃
@@ -9,7 +9,7 @@
 ┃   KMP  ──────────────────────────────────► Swift   ┃
 ┃                                                    ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
+</pre>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.x-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
