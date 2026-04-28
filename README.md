@@ -16,6 +16,7 @@
 [![Swift](https://img.shields.io/badge/Swift-6.x-FA7343?logo=swift&logoColor=white)](https://swift.org)
 [![SKIE](https://img.shields.io/badge/SKIE-0.8+-blue)](https://skie.touchlab.co)
 [![Maintained by skills-evolution](https://img.shields.io/badge/maintained%20by-skills--evolution-0ea5e9)](https://github.com/sorunokoe/skills-evolution)
+<br>
 [![Works with Claude](https://img.shields.io/badge/Works%20with-Claude-9370DB)](https://claude.ai)
 [![Works with Codex](https://img.shields.io/badge/Works%20with-Codex-412991?logo=openai&logoColor=white)](https://openai.com/codex)
 [![Works with GitHub Copilot](https://img.shields.io/badge/Works%20with-GitHub%20Copilot-2ea44f?logo=github)](https://github.com/features/copilot)
