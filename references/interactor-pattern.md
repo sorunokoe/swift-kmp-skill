@@ -65,15 +65,18 @@ final class ProfileInteractor: Sendable {
 - `@concurrent` — runs on the Swift concurrency thread pool, not the main actor
 - `nonisolated` — method has no actor isolation; callers can invoke from any context
 
-> **Official reference**: https://developer.apple.com/documentation/swift/asyncsequence
-> Swift 6.2 `@concurrent` is the idiomatic way to leave actor isolation for background work.
+> **Official reference**: https://www.swift.org/blog/swift-6.2-released/ (see "Opting into concurrency with @concurrent")  
+> `@concurrent` was introduced in **Swift 6.2** as part of the `-nonisolated-nonsending-by-default` upcoming feature. It explicitly opts a function into running on the concurrent thread pool, which is the correct choice for KMP bridge methods.
 
 ```swift
 // ✅ Correct — leaves main actor, safe for KMP suspend functions
 @concurrent
 nonisolated func fetchData() async -> Result<DataModel, AppError> { … }
 
-// ❌ Wrong — blocks main actor during KMP call (dangerous on @MainActor apps)
+// ❌ Wrong — in Swift 6.2's default-isolation-MainActor mode, async functions inherit
+// the caller's actor context. Without @concurrent, this runs on the main actor.
+// (In standard Swift 6.x without default-isolation, nonisolated async already hops to
+// the cooperative pool — but @concurrent makes the intent explicit and future-proof.)
 func fetchData() async -> Result<DataModel, AppError> { … }
 ```
 
@@ -87,8 +90,9 @@ are implicitly `@Sendable` and satisfy feature module closure signatures directl
 SKIE bridges Kotlin `sealed class` / `sealed interface` to Swift using `onEnum(of:)`.
 
 > **SKIE reference**: https://skie.touchlab.co/features
-> ⚠️ This is the SKIE-era approach. **Swift Export** will produce native Swift enums.
-> See https://kotlinlang.org/docs/native-swift-export.html for the forward-looking path.
+> ⚠️ This is the SKIE-era approach. **Swift Export** currently maps Kotlin `enum class` to native
+> Swift `enum`, but sealed class/interface bridging is not yet in its feature set.
+> See https://kotlinlang.org/docs/native-swift-export.html for current scope.
 > Treat every `onEnum(of:)` usage as transitional and keep it in bridge code only.
 
 ```swift
@@ -160,21 +164,6 @@ nonisolated func loadNextPage() async {
 
 ---
 
-## Logging Conventions
-
-Use `os.Logger` — never `print()` (print is a lint error in Swift projects):
-
-```swift
-private let logger = Logger(subsystem: "com.example.app", category: "ProfileInteractor")
-
-logger.debug("\(result, privacy: .public)")           // Non-sensitive debug info
-logger.error("\(String(describing: error), privacy: .public)")   // Business logic failures
-logger.critical("\(String(describing: error), privacy: .public)") // KMP runtime crashes
-logger.critical("\(String(describing: error), privacy: .private)") // Sensitive data (auth, PII)
-```
-
----
-
 ## Interactor vs Service
 
 | | Interactor | Service |
@@ -208,7 +197,30 @@ final class AuthService: AuthServiceProtocol {
             logger.critical("\(String(describing: error), privacy: .private)")
         }
     }
+
+    func logout() async {
+        do {
+            try await component.authPresenter.logout()
+        } catch {
+            logger.critical("\(String(describing: error), privacy: .private)")
+        }
+    }
 }
 ```
 
 See `references/flow-bridging.md` for stream consumption patterns.
+
+---
+
+## Logging Conventions
+
+Use `os.Logger` — never `print()` (print is a lint error in Swift projects):
+
+```swift
+private let logger = Logger(subsystem: "com.example.app", category: "ProfileInteractor")
+
+logger.debug("\(result, privacy: .public)")           // Non-sensitive debug info
+logger.error("\(String(describing: error), privacy: .public)")   // Business logic failures
+logger.critical("\(String(describing: error), privacy: .public)") // KMP runtime crashes
+logger.critical("\(String(describing: error), privacy: .private)") // Sensitive data (auth, PII)
+```

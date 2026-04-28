@@ -16,7 +16,10 @@
 [![Swift](https://img.shields.io/badge/Swift-6.x-FA7343?logo=swift&logoColor=white)](https://swift.org)
 [![SKIE](https://img.shields.io/badge/SKIE-0.8+-blue)](https://skie.touchlab.co)
 [![Works with Claude](https://img.shields.io/badge/Works%20with-Claude-9370DB)](https://claude.ai)
+[![Works with Codex](https://img.shields.io/badge/Works%20with-Codex-412991?logo=openai&logoColor=white)](https://openai.com/codex)
 [![Works with GitHub Copilot](https://img.shields.io/badge/Works%20with-GitHub%20Copilot-2ea44f?logo=github)](https://github.com/features/copilot)
+[![Works with Cursor](https://img.shields.io/badge/Works%20with-Cursor-000000)](https://cursor.com)
+[![Works with Gemini](https://img.shields.io/badge/Works%20with-Gemini-4285F4?logo=google&logoColor=white)](https://gemini.google.com)
 
 **An AI coding skill for structuring the bridge between  
 Kotlin Multiplatform (KMP) and Swift feature modules.**
@@ -33,10 +36,10 @@ Kotlin Multiplatform (KMP) and Swift feature modules.**
 - ✅ **Interactor pattern** — request/response KMP calls with `@concurrent nonisolated` bridge methods
 - ✅ **Flow bridging** — `SkieSwiftFlow` direct exposure vs `AsyncStream` wrapping with leak-safe teardown
 - ✅ **Type mapping** — Kotlin sealed dispatch with `onEnum(of:)`, `KotlinThrowable` containment, collections
-- ✅ **Compose embedding** — `UIViewControllerRepresentable` wrappers for stateless and bidirectional Compose views
 - ✅ **Swift Export migration** — transition path from SKIE-era `onEnum(of:)` to native Swift enums
 - ✅ **Sendable safety** — what types must be `Sendable` at bridge boundaries and why
-- ✅ **Apple doc citations** — `UIViewControllerRepresentable`, `AsyncStream`, `AsyncSequence` official quotes
+- ✅ **Apple doc citations** — `AsyncStream`, `AsyncSequence` official quotes
+- 🔗 **Compose embedding** → covered by the companion [`swiftui-compose`](https://github.com/sorunokoe/swiftui-compose-skill) skill
 
 ---
 
@@ -47,14 +50,13 @@ Kotlin Multiplatform (KMP) and Swift feature modules.**
 > Every KMP import lives in one place — the bridge layer.
 
 ```
-KMP XCFramework
+KMP iOS Framework  (direct / SwiftPM / CocoaPods)
        │  @preconcurrency import — bridge layer only
        ▼
   Bridge Layer
   ┌─ Interactors (request/response KMP calls)
   ├─ Services (long-lived stream/lifecycle bridge)
-  ├─ Mappers (kill invalid state here)
-  └─ Compose helpers (UIViewControllerRepresentable)
+  └─ Mappers (kill invalid state here)
        │  @Sendable closures with pure Swift types only
        ▼
   Feature Modules (SPM packages)
@@ -71,14 +73,15 @@ invalid states are killed in mappers before features ever see data.
 | File | Load when |
 |------|-----------|
 | [`SKILL.md`](SKILL.md) | **Always first** — hard rules, quick cheatsheet, review checklist |
-| [`references/architecture.md`](references/architecture.md) | Module boundary unclear; XCFramework setup; `Feature.initialize` pattern |
+| [`references/architecture.md`](references/architecture.md) | Module boundary unclear; iOS framework integration setup; `Feature.initialize` pattern |
 | [`references/interactor-pattern.md`](references/interactor-pattern.md) | Creating/reviewing an Interactor or Service |
 | [`references/flow-bridging.md`](references/flow-bridging.md) | Bridging Kotlin Flows; `SkieSwiftFlow` vs `AsyncStream` |
-| [`references/compose-integration.md`](references/compose-integration.md) | Embedding Compose views in SwiftUI |
 | [`references/type-mapping.md`](references/type-mapping.md) | Kotlin sealed types, error mapping, collections, `Sendable` |
 
-> **Token budget**: `SKILL.md` (~1.5k tokens) covers most tasks. Load one reference only when
+> **Token budget**: `SKILL.md` (~1.7k tokens) covers most tasks. Load one reference only when
 > you need the detailed API contract for that topic.
+
+> 🔗 **Embedding Compose views in SwiftUI?** See the companion [**swiftui-compose**](https://github.com/sorunokoe/swiftui-compose-skill) skill — it covers `UIViewControllerRepresentable` wiring, the coordinator pattern, bidirectional state, and teardown.
 
 ---
 
@@ -141,10 +144,8 @@ Full rules and review checklist in [`SKILL.md`](SKILL.md).
 |---|---|
 | Kotlin | 1.9+ |
 | SKIE | 0.8+ |
-| Swift | 5.9+ (Swift 6.x for full concurrency) |
+| Swift | 6.2+ (for `@concurrent`; 5.9+ minimum, 6.x for full concurrency) |
 | iOS | 15.0+ |
-
----
 
 ---
 

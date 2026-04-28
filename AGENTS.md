@@ -10,7 +10,7 @@ A structured AI coding skill for developers building
 [Kotlin Multiplatform (KMP)](https://kotlinlang.org/docs/multiplatform-intro.html) apps
 with Swift/iOS native UI.
 
-**The core rule**: Feature modules must never import the KMP XCFramework.
+**The core rule**: Feature modules must never import the KMP framework (regardless of integration method).
 They receive `@Sendable` closures with pure Swift types. Every KMP import lives
 in one place — the bridge layer.
 
@@ -21,12 +21,14 @@ in one place — the bridge layer.
 ```
 SKILL.md                   ← ALWAYS load first — hard rules, cheatsheet, review checklist
 references/
-├── architecture.md        ← 4-layer bridge model, XCFramework pipeline, module boundary rule
+├── architecture.md        ← 4-layer bridge model, iOS integration methods, module boundary rule
 ├── interactor-pattern.md  ← Interactor template, @concurrent nonisolated, error handling
 ├── flow-bridging.md       ← SkieSwiftFlow vs AsyncStream, leak-safe onTermination
-├── type-mapping.md        ← Kotlin sealed dispatch, KotlinThrowable, collections, Sendable
-└── compose-integration.md ← UIViewControllerRepresentable, coordinator, dismantleUIViewController
+└── type-mapping.md        ← Kotlin sealed dispatch, KotlinThrowable, collections, Sendable
 ```
+
+> 🔗 **Compose Multiplatform ↔ SwiftUI** (`UIViewControllerRepresentable`, coordinator pattern, teardown)
+> is covered by the companion [**swiftui-compose**](https://github.com/sorunokoe/swiftui-compose-skill) skill.
 
 ---
 

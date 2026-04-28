@@ -90,7 +90,7 @@ nonisolated func streamItems() -> AsyncStream<ItemListState> {
         }
 
         // Cancel the driving Task when the consumer cancels:
-        continuation.onTermination = { _ in
+        continuation.onTermination = { @Sendable _ in
             task.cancel()
         }
     }
@@ -101,28 +101,11 @@ nonisolated func streamItems() -> AsyncStream<ItemListState> {
 1. Create a `Task` inside the `AsyncStream` closure to drive the flow
 2. Wrap the loop in `do/catch` — SKIE flows can terminate with an error; `finish()` must always run
 3. Guard with `if Task.isCancelled { break }` inside the loop
-4. **Always** set `continuation.onTermination = { _ in task.cancel() }` — omitting this leaks the Task
+4. **Always** set `continuation.onTermination = { @Sendable _ in task.cancel() }` — omitting this leaks the Task
 5. Call `continuation.finish()` after the `do/catch` to signal stream completion
 
----
-
-## Pattern 3: Guard Before Void KMP Calls
-
-For KMP methods that return `Void` (e.g. pagination triggers), guard cancellation and
-handle errors:
-
-```swift
-@concurrent
-nonisolated func loadNextPage() async {
-    guard !Task.isCancelled else { return }
-
-    do {
-        try await configuration.component.listInteractor.loadMore()
-    } catch {
-        logger.error("loadNextPage error: \(String(describing: error), privacy: .public)")
-    }
-}
-```
+> For guarding Void KMP calls (pagination, fire-and-forget triggers), see the
+> **Cancellation Guard** section in `references/interactor-pattern.md`.
 
 ---
 

@@ -4,9 +4,10 @@
 
 ## The Bridge Model
 
-KMP for iOS works by compiling shared Kotlin code into an **XCFramework** that is consumed only
-by the bridge layer. Feature modules (SPM packages or sub-targets) receive pure Swift types
-through `@Sendable` closures — they never touch the KMP framework.
+KMP for iOS compiles shared Kotlin code into a native iOS framework that is consumed only
+by the bridge layer. **The integration method does not affect the bridge patterns** — the
+same interactor, service, and mapper code works with any of the three integration approaches.
+Feature modules receive pure Swift types through `@Sendable` closures and never touch the KMP framework.
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -14,7 +15,7 @@ through `@Sendable` closures — they never touch the KMP framework.
 │  Shared business logic, domain models        │
 │  Coroutines, Flows, suspend functions        │
 └─────────────────────┬───────────────────────┘
-                      │  .xcframework (via SwiftPM binaryTarget or local path)
+                      │  iOS framework (direct / SwiftPM / CocoaPods)
                       ▼
 ┌─────────────────────────────────────────────┐
 │  Bridge Layer (main/host target)             │
@@ -38,7 +39,7 @@ through `@Sendable` closures — they never touch the KMP framework.
 
 ## The Module Boundary Rule
 
-> **Feature modules NEVER import the KMP XCFramework.** They receive `@Sendable` closures
+> **Feature modules NEVER import the KMP framework.** They receive `@Sendable` closures
 > that return pure Swift types. The word "Kotlin" does not appear in their source code.
 
 Benefits:
@@ -62,14 +63,51 @@ import YourKmpFramework  // Must not exist in any feature module file
 
 ---
 
-## XCFramework Build Pipeline
+## iOS Framework Integration Methods
 
-> **Official reference**: https://kotlinlang.org/docs/multiplatform/multiplatform-build-native-binaries.html
+> **Official reference**: https://kotlinlang.org/docs/multiplatform/multiplatform-ios-integration-overview.html
+
+Kotlin produces a standard Apple framework (`.framework` or `.xcframework`). Choose the
+integration method that fits your project structure — the bridge patterns are identical in all cases.
+
+| Method | How it works | Best for |
+|--------|-------------|----------|
+| **Direct integration** | Xcode run script calls `embedAndSignAppleFrameworkForXcode` Gradle task during every build | Monorepo, simultaneous iOS+KMP development; default in KMP IDE plugin |
+| **SwiftPM local package** | KMP framework declared as a local `.binaryTarget` in `Package.swift` | Monorepo with SPM-based iOS project |
+| **CocoaPods local podspec** | KMP framework connected via local `.podspec` | Projects with CocoaPods dependencies |
+| **SwiftPM remote (XCFramework)** | XCFramework published as a GitHub release; consumed as `.binaryTarget` with URL + checksum | Separated codebases; third-party SDK distribution |
+| **CocoaPods remote (XCFramework)** | XCFramework distributed through CocoaPods | Projects using CocoaPods with a separated codebase |
+
+### Option A: Direct integration (most common for monorepos)
 
 ```kotlin
-// build.gradle.kts (Kotlin side)
+// build.gradle.kts — no extra XCFramework task needed
+kotlin {
+    iosArm64()
+    iosSimulatorArm64()
+    // The embedAndSignAppleFrameworkForXcode task is registered automatically
+}
+```
+
+```bash
+# Xcode run script phase (before "Compile Sources"):
+cd "$SRCROOT/.."
+./gradlew :shared:embedAndSignAppleFrameworkForXcode
+```
+
+The framework is built and embedded by Gradle during every Xcode build. The Swift import is identical to other methods:
+```swift
+@preconcurrency import SharedKit  // same import regardless of integration method
+```
+
+### Option B: Remote XCFramework via SwiftPM
+
+```kotlin
+// build.gradle.kts
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+
 val xcf = XCFramework("SharedKit")
-listOf(iosArm64(), iosX64(), iosSimulatorArm64()).forEach {
+listOf(iosArm64(), iosSimulatorArm64()).forEach {
     it.binaries.framework {
         baseName = "SharedKit"
         xcf.add(this)
@@ -81,8 +119,10 @@ listOf(iosArm64(), iosX64(), iosSimulatorArm64()).forEach {
 // Package.swift — consume as a SwiftPM binary target
 .binaryTarget(
     name: "SharedKit",
-    path: "../../shared/build/XCFrameworks/debug/SharedKit.xcframework"
-    // or a remote URL with checksum for distribution
+    url: "https://example.com/releases/SharedKit.xcframework.zip",
+    checksum: "<sha256 checksum>"
+    // or use a local path for development:
+    // path: "../../shared/build/XCFrameworks/debug/SharedKit.xcframework"
 )
 ```
 

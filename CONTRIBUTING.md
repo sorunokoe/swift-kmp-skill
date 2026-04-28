@@ -69,7 +69,7 @@ Use generic placeholder names — never project-specific class names:
 
 | Concept | Use this |
 |---------|----------|
-| KMP XCFramework | `YourKmpFramework` |
+| KMP iOS framework | `YourKmpFramework` |
 | App DI component | `AppComponent` |
 | Feature module | `<Feature>Feature` |
 | Bundle ID | `com.example.app` |

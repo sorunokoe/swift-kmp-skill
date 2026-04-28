@@ -1,6 +1,6 @@
 ---
 name: swift-kmp
-description: 'KMP bridge standards for iOS. USE FOR: structuring a bridge layer between Kotlin Multiplatform (KMP) and Swift; integrating KMP XCFramework APIs in a Swift app; handling SKIE flows and sealed classes; mapping Kotlin models/errors to Swift domain types; keeping KMP imports confined to the bridge layer; embedding Compose Multiplatform views in SwiftUI.'
+description: 'KMP bridge standards for iOS. USE FOR: structuring a bridge layer between Kotlin Multiplatform (KMP) and Swift; integrating KMP iOS framework APIs in a Swift app (direct integration, SwiftPM, or CocoaPods); handling SKIE flows and sealed classes; mapping Kotlin models/errors to Swift domain types; keeping KMP imports confined to the bridge layer. For Compose ↔ SwiftUI embedding, use the swiftui-compose skill.'
 argument-hint: 'Describe the Swift-Kotlin bridge integration you need'
 applyTo: '**/*.swift'
 ---
@@ -17,7 +17,7 @@ applyTo: '**/*.swift'
 | Topic | Link |
 |-------|------|
 | Kotlin/Native ↔ Swift/ObjC interop | https://kotlinlang.org/docs/native-objc-interop.html |
-| iOS integration methods (XCFramework) | https://kotlinlang.org/docs/multiplatform/multiplatform-ios-integration-overview.html |
+| iOS integration methods overview | https://kotlinlang.org/docs/multiplatform/multiplatform-ios-integration-overview.html |
 | Swift Export (experimental — future direction) | https://kotlinlang.org/docs/native-swift-export.html |
 | SKIE features (flows, sealed classes, suspend) | https://skie.touchlab.co/features |
 | Apple `UIViewControllerRepresentable` | https://developer.apple.com/documentation/swiftui/uiviewcontrollerrepresentable |
@@ -39,7 +39,7 @@ applyTo: '**/*.swift'
 
 ## Hard Rules
 
-- ❌ **No KMP framework import in feature modules** — only the bridge/main target imports the KMP XCFramework
+- ❌ **No KMP framework import in feature modules** — only the bridge/main target imports the KMP framework (regardless of integration method)
 - ❌ **No `KotlinThrowable` in feature code** — catch at the bridge, re-throw as a typed Swift `Error`
 - ❌ **No `SkieSwiftFlow<T>` in feature modules** — wrap to `AsyncStream` at the bridge boundary
 - ❌ **Kotlin collections (`KotlinList`, `KotlinArray`) must be mapped to `[T]`** at the bridge, not passed through
@@ -50,7 +50,7 @@ applyTo: '**/*.swift'
 ## The Core Principle
 
 ```
-KMP XCFramework
+KMP iOS Framework  (direct / SwiftPM / CocoaPods — see architecture.md)
        ↓  @preconcurrency import — bridge layer only
        │  (Bridge: DI wiring, Interactors, Services, Mappers, Compose helpers)
        ↓  @Sendable closures with pure Swift types only
@@ -72,24 +72,22 @@ are killed in mappers before features ever see data.
 | `onEnum(of: result)` | Kotlin sealed class dispatch (bridge layer only) | `references/type-mapping.md` |
 | `SkieSwiftFlow<T>` direct exposure | Service owns a long-lived stream (bridge layer only) | `references/flow-bridging.md` |
 | `AsyncStream` wrapping | Re-export stream to feature modules with mapping | `references/flow-bridging.md` |
-| Stateless Compose embedding | `UIViewControllerRepresentable` with empty `updateUIViewController` | `references/compose-integration.md` |
-| Bidirectional Compose embedding | `makeCoordinator()` + `update:` closure | `references/compose-integration.md` |
+| Stateless Compose embedding | `UIViewControllerRepresentable` with empty `updateUIViewController` | [`swiftui-compose` skill](https://github.com/sorunokoe/swiftui-compose-skill) |
+| Bidirectional Compose embedding | `makeCoordinator()` + `update:` closure | [`swiftui-compose` skill](https://github.com/sorunokoe/swiftui-compose-skill) |
 
 ---
 
 ## Reference Router
 
-> **Token budget**: This SKILL.md (~1.5k tokens) contains hard rules and a review checklist.
-> **Complete most bridge tasks using only this file.** Load `references/architecture.md` first
-> when unsure about layer ownership; load other references only for specific API contracts.
-> Load at most ONE reference per task step.
+> **Token budget**: This SKILL.md (~1.7k tokens) contains hard rules and a review checklist.
+> **Complete most bridge tasks using only this file.** Load a reference only when you need
+> the full API contract for that specific topic. Load at most ONE reference per task step.
 
 | Reference | Load when |
 |-----------|-----------|
-| `references/architecture.md` | **Always first** — module boundary, bridge pipeline, Feature.initialize pattern |
+| `references/architecture.md` | Layer ownership is unclear; iOS framework integration setup; `Feature.initialize` pattern |
 | `references/interactor-pattern.md` | Creating/reviewing an Interactor or Service class |
 | `references/flow-bridging.md` | Bridging Kotlin flows; SKIE vs AsyncStream choice |
-| `references/compose-integration.md` | Embedding Compose views in SwiftUI |
 | `references/type-mapping.md` | Kotlin sealed types, error mapping, collection mapping, Sendable |
 
 ---
@@ -115,9 +113,11 @@ are killed in mappers before features ever see data.
 
 - `@preconcurrency import <KmpFramework>` is required today for SKIE-generated APIs; treat as a
   bridge-only compatibility shim, not a feature-module pattern.
-- `onEnum(of:)` dispatch is SKIE-era interoperability. JetBrains' **Swift Export** will produce
-  native Swift enums directly (see https://kotlinlang.org/docs/native-swift-export.html).
-  Plan migrations toward native `switch` on Swift enums as Swift Export stabilizes.
+- `onEnum(of:)` dispatch is SKIE-era interoperability. JetBrains' **Swift Export** currently
+  maps Kotlin `enum class` to native Swift `enum`; sealed class/interface bridging as native
+  Swift types is not yet in Swift Export's documented feature set
+  (see https://kotlinlang.org/docs/native-swift-export.html).
+  Plan migrations toward native `switch` as Swift Export stabilizes.
 - Keep transition helpers isolated in mapper/interactor layers so future migration edits are localized.
 
 ---
@@ -129,4 +129,4 @@ This skill does NOT cover:
 - DI container wiring (FactoryKit/Koin/etc.) → see your DI standards skill
 - SPM package setup and concurrency settings → see your SPM module template skill
 - Swift concurrency rules (actors, Sendable, MainActor) → see your Swift concurrency skill
-- Compose Multiplatform ↔ SwiftUI interop beyond embedding → see `swiftui-compose` skill
+- Compose Multiplatform ↔ SwiftUI interop (`UIViewControllerRepresentable` wiring, coordinator pattern, teardown) → see [`swiftui-compose` skill](https://github.com/sorunokoe/swiftui-compose-skill)

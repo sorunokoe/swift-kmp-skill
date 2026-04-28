@@ -46,9 +46,11 @@ Feature Module  ("safe space" — no invalid state possible)
 
 SKIE bridges Kotlin `sealed class` / `sealed interface` to Swift using `onEnum(of:)`.
 
-> ⚠️ **Transitional pattern.** JetBrains' **Swift Export** will produce native Swift enums
-> directly. Keep `onEnum(of:)` confined to bridge layer mappers and interactors — this makes
-> the future migration to `switch` on Swift enums a localized refactor.
+> ⚠️ **Transitional pattern.** JetBrains' **Swift Export** currently maps Kotlin `enum class`
+> to native Swift `enum`. Support for `sealed class`/`sealed interface` as native Swift types
+> is not yet documented in the current Swift Export feature set — sealed class bridging still
+> requires SKIE's wrapper approach. Keep `onEnum(of:)` in bridge layer only so any future
+> migration to native `switch` is a localized refactor.
 > Reference: https://kotlinlang.org/docs/native-swift-export.html
 
 ```swift
