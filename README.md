@@ -25,7 +25,7 @@
 **An AI coding skill for structuring the bridge between  
 Kotlin Multiplatform (KMP) and Swift feature modules.**
 
-[What it covers](#what-this-skill-covers) · [Files](#files) · [Core principle](#core-principle) · [Quick start](#quick-start)
+[What it covers](#what-this-skill-covers) · [Files](#files) · [Core principle](#core-principle) · [Quick start](#quick-start) · [Key rules](#key-rules-summary) · [Docs](#official-documentation) · [Automated maintenance](#automated-maintenance)
 
 </div>
 
@@ -122,19 +122,72 @@ Implement a Swift interactor that:
 - Catches KotlinThrowable and returns Result<ProfileData, ProfileError>
 ```
 
-### skills-evolution (automated governance)
+---
 
-Keep this skill accurate automatically — review on every PR that touches it,
-and auto-update version references on a schedule:
+## Key Rules (summary)
+
+- ❌ **No KMP framework import in feature modules** — only the bridge/main target
+- ❌ **No `KotlinThrowable` in feature code** — catch and re-throw as typed Swift `Error`
+- ❌ **No `SkieSwiftFlow<T>` in feature modules** — wrap to `AsyncStream` at the boundary
+- ❌ **No raw Kotlin collections (`KotlinList<T>`)** in feature modules — map to `[T]`
+- ✅ **`@concurrent nonisolated` on interactor bridge methods**
+- ✅ **`continuation.onTermination` always set** when wrapping Kotlin flows
+
+Full rules and review checklist in [`SKILL.md`](SKILL.md).
+
+---
+
+## Official Documentation
+
+| Topic | Link |
+|-------|------|
+| Kotlin/Native ↔ Swift/ObjC interop | [kotlinlang.org →](https://kotlinlang.org/docs/native-objc-interop.html) |
+| KMP iOS integration overview | [kotlinlang.org →](https://kotlinlang.org/docs/multiplatform/multiplatform-ios-integration-overview.html) |
+| SKIE features | [skie.touchlab.co →](https://skie.touchlab.co/features) |
+| Swift Export (experimental) | [kotlinlang.org →](https://kotlinlang.org/docs/native-swift-export.html) |
+| Apple `AsyncStream` | [developer.apple.com →](https://developer.apple.com/documentation/swift/asyncstream) |
+| Apple `UIViewControllerRepresentable` | [developer.apple.com →](https://developer.apple.com/documentation/swiftui/uiviewcontrollerrepresentable) |
+
+---
+
+## Requirements
+
+| | Version |
+|---|---|
+| Kotlin | 1.9+ |
+| SKIE | 0.8+ |
+| Swift | 6.2+ (for `@concurrent`; 5.9+ minimum, 6.x for full concurrency) |
+| iOS | 15.0+ |
+
+---
+
+## Related Skills
+
+> 🔗 **Embedding Compose Multiplatform views inside your SwiftUI app?**  
+> Check out [**swiftui-compose**](https://github.com/sorunokoe/swiftui-compose-skill) — the companion skill covering `UIViewControllerRepresentable` wiring, the coordinator pattern, bidirectional state sharing, and `dismantleUIViewController` teardown.
+
+---
+
+## Automated Maintenance
+
+This skill is governed by [**skills-evolution**](https://github.com/sorunokoe/skills-evolution) — AI skill governance that keeps guidance files accurate and up to date automatically.
+
+### gh-aw (recommended)
 
 ```bash
-# Add the OSS skill workflows (requires gh-aw):
+# PR review — AI feedback on every PR touching SKILL.md or references/**
 gh aw add sorunokoe/skills-evolution/workflows/oss-skill-pr-check.md@latest
+
+# Monthly update — version checks, AI content patches, opens PR
 gh aw add sorunokoe/skills-evolution/workflows/oss-skill-update.md@latest
+
 gh aw compile
 ```
 
-Or add a GitHub Actions workflow (no gh-aw needed):
+### GitHub Actions
+
+<details>
+<summary>Monthly skill health workflow</summary>
 
 ```yaml
 # .github/workflows/skill-health.yml
@@ -155,49 +208,7 @@ jobs:
     secrets:
       github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
-
-
-## Key Rules (summary)
-
-- ❌ **No KMP framework import in feature modules** — only the bridge/main target
-- ❌ **No `KotlinThrowable` in feature code** — catch and re-throw as typed Swift `Error`
-- ❌ **No `SkieSwiftFlow<T>` in feature modules** — wrap to `AsyncStream` at the boundary
-- ❌ **No raw Kotlin collections (`KotlinList<T>`)** in feature modules — map to `[T]`
-- ✅ **`@concurrent nonisolated` on interactor bridge methods**
-- ✅ **`continuation.onTermination` always set** when wrapping Kotlin flows
-
-Full rules and review checklist in [`SKILL.md`](SKILL.md).
-
----
-
-## Official Documentation
-
-| Topic | Link |
-|-------|------|
-| Kotlin/Native ↔ Swift/ObjC interop | https://kotlinlang.org/docs/native-objc-interop.html |
-| KMP iOS integration overview | https://kotlinlang.org/docs/multiplatform/multiplatform-ios-integration-overview.html |
-| SKIE features | https://skie.touchlab.co/features |
-| Swift Export (experimental) | https://kotlinlang.org/docs/native-swift-export.html |
-| Apple `AsyncStream` | https://developer.apple.com/documentation/swift/asyncstream |
-| Apple `UIViewControllerRepresentable` | https://developer.apple.com/documentation/swiftui/uiviewcontrollerrepresentable |
-
----
-
-## Requirements
-
-| | Version |
-|---|---|
-| Kotlin | 1.9+ |
-| SKIE | 0.8+ |
-| Swift | 6.2+ (for `@concurrent`; 5.9+ minimum, 6.x for full concurrency) |
-| iOS | 15.0+ |
-
----
-
-## Related Skills
-
-> 🔗 **Embedding Compose Multiplatform views inside your SwiftUI app?**  
-> Check out [**swiftui-compose**](https://github.com/sorunokoe/swiftui-compose-skill) — the companion skill covering `UIViewControllerRepresentable` wiring, the coordinator pattern, bidirectional state sharing, and `dismantleUIViewController` teardown.
+</details>
 
 ---
 
