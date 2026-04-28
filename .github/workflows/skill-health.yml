@@ -5,6 +5,11 @@ on:
     - cron: "0 3 1 * *"   # monthly, 1st of month at 03:00 UTC
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+  models: read
+
 jobs:
   health:
     uses: sorunokoe/skills-evolution/.github/workflows/oss-skill-health.yml@main
