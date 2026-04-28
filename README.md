@@ -22,6 +22,9 @@
 [![Works with GitHub Copilot](https://img.shields.io/badge/Works%20with-GitHub%20Copilot-2ea44f?logo=github)](https://github.com/features/copilot)
 [![Works with Cursor](https://img.shields.io/badge/Works%20with-Cursor-000000)](https://cursor.com)
 [![Works with Gemini](https://img.shields.io/badge/Works%20with-Gemini-4285F4?logo=google&logoColor=white)](https://gemini.google.com)
+<!-- skill-evolution:badge:begin -->
+[![Skill evolved 1×](https://img.shields.io/badge/evolved-1%C3%97_newborn-blue?style=flat-square&logo=dna&logoColor=white)](https://github.com/sorunokoe/swift-kmp-skill/pulls?q=is%3Apr+is%3Amerged)
+<!-- skill-evolution:badge:end -->
 
 **An AI coding skill for structuring the bridge between  
 Kotlin Multiplatform (KMP) and Swift feature modules.**

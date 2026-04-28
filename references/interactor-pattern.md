@@ -95,6 +95,8 @@ SKIE bridges Kotlin `sealed class` / `sealed interface` to Swift using `onEnum(o
 > See https://kotlinlang.org/docs/native-swift-export.html for current scope.
 > Treat every `onEnum(of:)` usage as transitional and keep it in bridge code only.
 
+> **SKIE version**: `0.10.11` (April 2026)
+
 ```swift
 // ✅ Current pattern:
 switch onEnum(of: result) {
