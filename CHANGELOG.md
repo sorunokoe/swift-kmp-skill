@@ -4,13 +4,30 @@ All notable changes to this skill are documented here.
 
 ---
 
+## [1.0.2] — 2026-04-28
+
+### Quick Start overhaul
+- Canonical install path is now `.github/skills/swift-kmp/` (compatible with GitHub Copilot, Cursor, and skills-evolution)
+- Added skills-evolution integration guide: `gh aw add` one-liner and manual YAML workflow for automated PR review + monthly version updates
+- Removed CocoaPods integration methods (outdated) — skill now documents direct integration, SwiftPM local package, and SwiftPM remote XCFramework
+
+---
+
+## [1.0.1] — 2026-04-28
+
+### CocoaPods removed
+- Removed CocoaPods local podspec and remote XCFramework integration methods
+- Skill covers direct integration, SwiftPM local package, SwiftPM remote XCFramework only
+
+---
+
 ## [1.0.0] — 2026-04-28
 
 ### Initial production release
 
 **Core skill files**
 - `SKILL.md` — hard rules, review checklist, quick pattern reference, reference router
-- `references/architecture.md` — 4-layer bridge model with all 5 iOS framework integration methods
+- `references/architecture.md` — 4-layer bridge model with all iOS framework integration methods (direct, SwiftPM local, SwiftPM remote XCFramework)
 - `references/interactor-pattern.md` — full interactor template with `@concurrent nonisolated`, error handling, cancellation guard, Interactor vs Service comparison
 - `references/flow-bridging.md` — `SkieSwiftFlow` vs `AsyncStream` decision guide with leak-safe teardown
 - `references/type-mapping.md` — Kotlin sealed dispatch, `KotlinThrowable` containment, collection mapping, `Sendable` contracts
@@ -18,7 +35,7 @@ All notable changes to this skill are documented here.
 - `CONTRIBUTING.md` — contribution principles, PR workflow, code example guidelines
 
 **Architecture**
-- Documents all 3 recommended KMP iOS integration methods (direct, SwiftPM local, SwiftPM remote XCFramework) — bridge patterns are identical in all cases
+- Documents recommended KMP iOS integration methods (direct, SwiftPM local, SwiftPM remote XCFramework) — bridge patterns are identical in all cases
 - Clear module boundary rule: KMP imports are confined to the bridge layer regardless of integration method
 
 **Correctness (fact-checked against official documentation)**

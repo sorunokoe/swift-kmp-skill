@@ -87,14 +87,24 @@ invalid states are killed in mappers before features ever see data.
 
 ## Quick Start
 
-### GitHub Copilot
+### Install
 
 ```bash
-# Copy to your repo:
-cp -r swift-kmp /path/to/your-project/.github/skills/
+# 1. Clone into the canonical skill location:
+git clone https://github.com/sorunokoe/swift-kmp-skill.git \
+  /path/to/your-project/.github/skills/swift-kmp
+
+# 2. (Optional) Remove git history — you own this copy:
+rm -rf /path/to/your-project/.github/skills/swift-kmp/.git
 ```
 
-Then in Copilot Chat:
+> **Why `.github/skills/swift-kmp/`?** This is the path GitHub Copilot, Cursor, and the
+> [skills-evolution](https://github.com/sorunokoe/skills-evolution) governance toolkit
+> all discover skills from.
+
+### GitHub Copilot
+
+In Copilot Chat, after installing:
 ```
 @swift-kmp Implement a ProfileInteractor that fetches user data from KMP
 ```
@@ -102,7 +112,8 @@ Then in Copilot Chat:
 ### Claude / Any AI agent
 
 ```
-Load swift-kmp/SKILL.md, then swift-kmp/references/interactor-pattern.md.
+Load .github/skills/swift-kmp/SKILL.md, then
+.github/skills/swift-kmp/references/interactor-pattern.md.
 
 Implement a Swift interactor that:
 - Calls component.profileInteractor.fetchProfile() (Kotlin suspend function)
@@ -110,7 +121,37 @@ Implement a Swift interactor that:
 - Catches KotlinThrowable and returns Result<ProfileData, ProfileError>
 ```
 
----
+### skills-evolution (automated governance)
+
+Keep this skill accurate automatically — review on every PR that touches it,
+and auto-update version references on a schedule:
+
+```bash
+# Add the reusable workflows (requires gh-aw):
+gh aw add sorunokoe/skills-evolution/workflows/skills-pr-check.md@latest
+gh aw add sorunokoe/skills-evolution/workflows/skills-monthly-update.md@latest
+gh aw compile
+```
+
+Or manually add `.github/workflows/skills-pr-check.yml`:
+
+```yaml
+name: Skills PR Check
+on:
+  pull_request:
+    paths: [".github/skills/**"]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  check:
+    uses: sorunokoe/skills-evolution/.github/workflows/skills_pr_check.yml@latest
+    with:
+      tools_ref: latest
+    secrets:
+      copilot_token: ${{ secrets.COPILOT_TOKEN }}
+```
+
 
 ## Key Rules (summary)
 
