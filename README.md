@@ -207,7 +207,7 @@ jobs:
     with:
       enable_ai_skill_update: true
     secrets:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.GITHUB_TOKEN }}
 ```
 </details>
 

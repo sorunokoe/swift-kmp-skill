@@ -12,4 +12,4 @@ jobs:
       enable_ai_skill_update: true
       tracked_deps: '[{"alias": "SKIE", "repo": "touchlab/SKIE"}, {"alias": "kotlin", "repo": "JetBrains/kotlin"}]'
     secrets:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ secrets.GITHUB_TOKEN }}
