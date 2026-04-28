@@ -127,29 +127,32 @@ Keep this skill accurate automatically — review on every PR that touches it,
 and auto-update version references on a schedule:
 
 ```bash
-# Add the reusable workflows (requires gh-aw):
-gh aw add sorunokoe/skills-evolution/workflows/skills-pr-check.md@latest
-gh aw add sorunokoe/skills-evolution/workflows/skills-monthly-update.md@latest
+# Add the OSS skill workflows (requires gh-aw):
+gh aw add sorunokoe/skills-evolution/workflows/oss-skill-pr-check.md@latest
+gh aw add sorunokoe/skills-evolution/workflows/oss-skill-update.md@latest
 gh aw compile
 ```
 
-Or manually add `.github/workflows/skills-pr-check.yml`:
+Or add a GitHub Actions workflow (no gh-aw needed):
 
 ```yaml
-name: Skills PR Check
+# .github/workflows/skill-health.yml
+name: Skill Health
 on:
-  pull_request:
-    paths: [".github/skills/**"]
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
+  models: read
 jobs:
-  check:
-    uses: sorunokoe/skills-evolution/.github/workflows/skills_pr_check.yml@latest
+  health:
+    uses: sorunokoe/skills-evolution/.github/workflows/oss_skill_health.yml@latest
     with:
-      tools_ref: latest
+      enable_ai_skill_update: true
     secrets:
-      copilot_token: ${{ secrets.COPILOT_TOKEN }}
+      github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 
