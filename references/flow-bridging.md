@@ -19,7 +19,7 @@ Apple's documentation explains the intent directly:
 > delegation-based APIs to participate with `async`-`await`."*
 > — [AsyncStream](https://developer.apple.com/documentation/swift/asyncstream)
 
-Kotlin Flows (via SKIE) are the "callback-based APIs" that `AsyncStream` is designed for.
+Kotlin Flows (via SKIE version 0.10.11) are the "callback-based APIs" that `AsyncStream` is designed for.
 The `continuation.onTermination` property is the Apple-canonical way to stop the source
 when the consumer cancels — **always set it**:
 
@@ -167,7 +167,7 @@ func stopObserving() {
 
 ## SKIE: Kotlin Flow → SkieSwiftFlow
 
-SKIE automatically bridges `Flow<T>` to `SkieSwiftFlow<T>` which conforms to `AsyncSequence`.
+SKIE (version 0.10.11) automatically bridges `Flow<T>` to `SkieSwiftFlow<T>` which conforms to `AsyncSequence`.
 For sealed classes in the flow, use `onEnum(of:)` on the emitted values in the bridge layer:
 
 ```swift

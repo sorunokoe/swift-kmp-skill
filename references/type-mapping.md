@@ -44,7 +44,7 @@ Feature Module  ("safe space" — no invalid state possible)
 
 ## Kotlin Sealed Classes: `onEnum(of:)`
 
-SKIE bridges Kotlin `sealed class` / `sealed interface` to Swift using `onEnum(of:)` (SKIE `0.10.11`).
+SKIE bridges Kotlin `sealed class` / `sealed interface` to Swift using `onEnum(of:)` (SKIE `0.10.11` (April 2026)).
 
 > ⚠️ **Transitional pattern.** JetBrains' **Swift Export** currently maps Kotlin `enum class`
 > to native Swift `enum`. Support for `sealed class`/`sealed interface` as native Swift types
@@ -86,7 +86,7 @@ case let .failure(wrapper):
 
 ## Kotlin Errors: `KotlinThrowable` → Swift Domain Error
 
-Kotlin `suspend` functions throw `KotlinThrowable` on runtime failure (Kotlin `v2.3.21`).
+Kotlin `suspend` functions throw `KotlinThrowable` on runtime failure (Kotlin `v2.3.21` (April 2026)).
 **Always catch at the bridge. Never let `KotlinThrowable` reach feature code.**
 
 ```swift
@@ -114,13 +114,13 @@ func fetchData() async -> Result<SomeData, AppError> {
 }
 ```
 
-Feature module `AppError` is a plain Swift `enum: Error` with no KMP types (Kotlin `v2.3.21`).
+Feature module `AppError` is a plain Swift `enum: Error` with no KMP types (Kotlin `v2.3.21` (April 2026)).
 
 ---
 
 ## Migration Path: SKIE → Swift Export
 
-When Swift Export is available for a bridged type (Kotlin `v2.3.21`):
+When Swift Export is available for a bridged type (Kotlin `v2.3.21` (April 2026)):
 1. Add a focused mapper test first (before refactor) to pin existing behavior.
 2. Replace `onEnum(of:)` in that mapper with native `switch` on the exported Swift enum.
 3. Drop `@preconcurrency import` only when the specific import path no longer needs it.
