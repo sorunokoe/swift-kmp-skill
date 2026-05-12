@@ -43,7 +43,7 @@ applyTo: '**/*.swift'
 - ❌ **No `KotlinThrowable` in feature code** — catch at the bridge, re-throw as a typed Swift `Error`
 - ❌ **No `SkieSwiftFlow<T>` in feature modules** — wrap to `AsyncStream` at the bridge boundary
 - ❌ **Kotlin collections (`KotlinList`, `KotlinArray`) must be mapped to `[T]`** at the bridge, not passed through
-- ❌ **No `onEnum(of:)` in feature stores or views** — confine to mapper and interactor layers in the bridge
+- ❌ **No `onEnum(of:)` in feature modules or views** — confine to mapper and bridge layers only
 
 ---
 
@@ -97,7 +97,7 @@ are killed in mappers before features ever see data.
 - [ ] KMP framework imports stay in the bridge layer (main target / bridge module); never in feature modules
 - [ ] Prefer `@preconcurrency import <KmpFramework>` on SKIE-heavy bridge files
 - [ ] Feature modules have no KMP framework import anywhere
-- [ ] The app component is injected via `Configuration`, never instantiated in interactors
+- [ ] KMP app components are injected via your DI mechanism, never instantiated directly in bridge classes
 - [ ] Interactor request/response methods use `@concurrent nonisolated func`
 - [ ] Kotlin sealed classes dispatched with `onEnum(of:)` — not raw pattern matching
 - [ ] Errors caught at bridge boundary; `KotlinThrowable` never reaches feature code
@@ -125,7 +125,7 @@ are killed in mappers before features ever see data.
 ## Out of Scope
 
 This skill does NOT cover:
-- TCA reducer/store design → see your TCA standards skill
+- State management and feature architecture → see your architecture skill
 - DI container wiring (FactoryKit/Koin/etc.) → see your DI standards skill
 - SPM package setup and concurrency settings → see your SPM module template skill
 - Swift concurrency rules (actors, Sendable, MainActor) → see your Swift concurrency skill
