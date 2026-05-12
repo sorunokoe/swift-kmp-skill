@@ -109,31 +109,12 @@ nonisolated func streamItems() -> AsyncStream<ItemListState> {
 
 ---
 
-## Consuming Streams in TCA / MVVM Stores
+## Consuming Streams in Feature Modules
 
-Feature stores consume streams via `.run` effects. Always pair with cancellation:
+Feature modules consume `AsyncStream` by owning a `Task` that drives the loop. Always cancel the task when the feature disappears or is deallocated.
 
 ```swift
-// TCA Reducer:
-case .onAppear:
-    return .run { [stream = dependencies.itemClient.streamItems] send in
-        for await state in stream() {
-            await send(.itemsUpdated(state))
-        }
-    }
-    .cancellable(id: CancelID.itemStream, cancelInFlight: true)
-
-case .onDisappear:
-    return .cancel(id: CancelID.itemStream)
-```
-
-**Rules:**
-- Always pair `.run` with `.cancellable(id:, cancelInFlight: true)` for stream effects
-- Cancel on the equivalent of `.onDisappear` or screen dismissal
-- `cancelInFlight: true` prevents duplicate subscriptions if the view reappears quickly
-
-For non-TCA architectures, use a `Task` stored in your view model:
-```swift
+// MVVM / ObservableObject / any view model:
 private var streamTask: Task<Void, Never>?
 
 func startObserving() {
@@ -151,6 +132,25 @@ func stopObserving() {
 }
 ```
 
+**Rules:**
+- Always cancel any in-flight task before starting a new one (`streamTask?.cancel()`)
+- Cancel on the equivalent of `onDisappear`, `deinit`, or screen dismissal
+- Use `[weak self]` to avoid retaining the view model beyond its lifetime
+
+**TCA:** use `.run` + `.cancellable` instead of a stored `Task`:
+```swift
+case .onAppear:
+    return .run { [stream = dependencies.itemClient.streamItems] send in
+        for await state in stream() {
+            await send(.itemsUpdated(state))
+        }
+    }
+    .cancellable(id: CancelID.itemStream, cancelInFlight: true)
+
+case .onDisappear:
+    return .cancel(id: CancelID.itemStream)
+```
+
 ---
 
 ## Choosing Between Patterns
@@ -160,7 +160,7 @@ func stopObserving() {
 | Service in bridge layer, callers also in bridge | `SkieSwiftFlow` direct exposure |
 | Needs mapping Kotlin types → Swift types | `AsyncStream` wrapping |
 | Will be passed into a feature module | `AsyncStream` wrapping (MUST) |
-| TCA dependency client | `AsyncStream` wrapping (concrete type required) |
+| DI-injectable client or dependency type | `AsyncStream` wrapping (concrete type required) |
 | Re-expose as a typed protocol property | `SkieSwiftFlow` (bridge protocol only) |
 
 ---

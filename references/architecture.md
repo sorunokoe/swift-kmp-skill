@@ -152,7 +152,7 @@ final class KmpComponentHolder: Sendable {
 // Or wired through your DI container of choice (FactoryKit, Resolver, manual, etc.)
 ```
 
-All interactors receive the component through their `Configuration` — they never create it.
+All bridge classes receive the KMP component through constructor injection — they never create it.
 
 ---
 
@@ -190,7 +190,7 @@ closure signatures directly — no adapter wrapper needed.
 | Location | Contents |
 |----------|----------|
 | Bridge layer (main target) | KMP imports, interactors, services, mappers, Compose helpers, DI wiring |
-| Feature module | Pure Swift types, TCA/MVVM stores, SwiftUI views, feature-local errors |
+| Feature module | Pure Swift types, stores/view models/coordinators, SwiftUI views, feature-local errors |
 | Both | Protocol definitions for testability (feature-owned, bridge implements) |
 
 Never let KMP types "leak" upward from the bridge into feature modules.
