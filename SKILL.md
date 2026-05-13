@@ -95,6 +95,7 @@ are killed in mappers before features ever see data.
 ## Review Checklist
 
 - [ ] KMP framework imports stay in the bridge layer (main target / bridge module); never in feature modules
+- [ ] **If Kotlin API surface changed**: xcframework rebuilt before writing any Swift bridge code (see `references/architecture.md` — SKIE Output as API Contract)
 - [ ] Prefer `@preconcurrency import <KmpFramework>` on SKIE-heavy bridge files
 - [ ] Feature modules have no KMP framework import anywhere
 - [ ] KMP app components are injected via your DI mechanism, never instantiated directly in bridge classes

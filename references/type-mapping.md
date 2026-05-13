@@ -46,6 +46,11 @@ Feature Module  ("safe space" — no invalid state possible)
 
 SKIE bridges Kotlin `sealed class` / `sealed interface` to Swift using `onEnum(of:)` (SKIE `0.10.11` (April 2026)).
 
+> **Case names come from SKIE-generated `.swiftinterface` output** — not directly from Kotlin source.
+> If sealed subtypes were added, removed, or renamed on the Kotlin side, rebuild the xcframework
+> before writing `onEnum` branches. See the *SKIE Output as API Contract* section in
+> `references/architecture.md` for the full rule on when a rebuild is required.
+
 > ⚠️ **Transitional pattern.** JetBrains' **Swift Export** currently maps Kotlin `enum class`
 > to native Swift `enum`. Support for `sealed class`/`sealed interface` as native Swift types
 > is not yet documented in the current Swift Export feature set — sealed class bridging still

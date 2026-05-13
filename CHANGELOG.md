@@ -4,6 +4,19 @@ All notable changes to this skill are documented here.
 
 ---
 
+## [1.0.6] — 2026-05-13
+
+### SKIE output as authoritative API contract
+
+- **`references/architecture.md`** — new *SKIE Output as API Contract* section:
+  - `.swiftinterface` inside the xcframework is the authoritative source for `onEnum` case names, type names, and nullability — not Kotlin source
+  - Decision table: which Kotlin changes require rebuilding the xcframework before writing Swift (`@ObjCName`-annotated types: property/subtype rename, supertype change, annotation added/removed) vs. which don't (test sources, Android-only code, `private` members, body-only changes, Gradle files)
+  - Best practice: read the relevant `.swiftinterface` file before writing bridge code for a changed type
+- **`references/type-mapping.md`** — clarifying note in the `onEnum(of:)` section: case names are SKIE-generated output, not direct Kotlin names; cross-reference to the new architecture section
+- **`SKILL.md`** — one checklist item added: xcframework must be rebuilt before writing Swift bridge code when the Kotlin API surface changed
+
+---
+
 ## [1.0.2] — 2026-04-28
 
 ### Quick Start overhaul

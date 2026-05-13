@@ -130,6 +130,61 @@ Build variants to consider:
 
 ---
 
+## SKIE Output as API Contract
+
+The xcframework built from your KMP shared module contains SKIE-generated `.swiftinterface`
+files. These files are the **authoritative source of truth** for the Swift-visible API surface:
+
+- `onEnum(of:)` case names (derived from Kotlin subtype names and `@ObjCName` annotations)
+- Type names visible to Swift (controlled by `@ObjCName`)
+- Property nullability (Kotlin optionality mapped to Swift optionality)
+- Function signatures visible across the bridge
+
+```
+YourKmpFramework.xcframework/
+└── ios-arm64_x86_64-simulator/
+    └── YourKmpFramework.framework/
+        └── Modules/
+            └── YourKmpFramework.swiftmodule/
+                └── arm64-apple-ios-simulator.swiftinterface  ← read this
+```
+
+### When to rebuild before writing Swift
+
+Kotlin changes that modify the Swift-visible API surface require **rebuilding the xcframework
+before writing any Swift bridge code**. Writing Swift against stale SKIE output produces code
+that won't compile.
+
+The Swift-visible API surface is defined by types annotated with `@ObjCName` (or subtypes
+of those types).
+
+**Rebuild required when a `@ObjCName`-annotated type (or its subtypes) has:**
+
+| Change | Why it matters |
+|--------|---------------|
+| Property added, removed, or renamed | Changes the generated Swift property name |
+| Sealed subtype added, removed, or renamed | Changes available `onEnum` case names |
+| Supertype or interface delegation changed | May add/remove inherited Swift-visible members |
+| `@ObjCName` annotation added or removed | Changes whether the type is Swift-visible at all |
+
+**Rebuild NOT required when the Kotlin change is:**
+
+| Change | Reason |
+|--------|--------|
+| In test source sets (`commonTest`, `*Test.kt`) | Test code is not included in the iOS framework |
+| In Android-only code (`androidMain`) | Not compiled into the iOS framework |
+| Only to `private` members | Private API is never emitted to `.swiftinterface` |
+| Only to a function body with no signature change | The ABI surface is unchanged |
+| Only to Gradle or build files | No Kotlin source is modified |
+
+### Best practice: read `.swiftinterface` first
+
+After rebuilding the xcframework following a Kotlin API change, read the relevant
+`.swiftinterface` file **before** writing bridge code. The Swift type names, case names,
+and nullability in that file are what the compiler will enforce — not the Kotlin source.
+
+---
+
 ## App Component Singleton
 
 The Kotlin application component is created once and shared across all interactors and services.
